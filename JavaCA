@@ -1,0 +1,125 @@
+import java.util.Scanner;
+
+class Account {
+    private String name;
+    private String accountNumber; // Phone number
+    private String password;
+    private double balance;
+
+    public Account(String name, String accountNumber, String password) {
+        this.name = name;
+        this.accountNumber = accountNumber;
+        this.password = password;
+        this.balance = 0.0;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public boolean deposit(double amount) {
+        if (amount > 0) {
+            this.balance += amount;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean transfer(double amount) {
+        if (amount > 0 && amount <= this.balance) {
+            this.balance -= amount;
+            return true;
+        }
+        return false;
+    }
+}
+
+public class ATMSystem {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Account Creation
+        System.out.println("=== CREATE ACCOUNT ===");
+        System.out.print("Enter your name: ");
+        String name = scanner.nextLine();
+
+        System.out.print("Enter your phone number: ");
+        String accountNumber = scanner.nextLine();
+
+        System.out.print("Set a password: ");
+        String password = scanner.nextLine();
+
+        // Instantiate Account object
+        Account userAccount = new Account(name, accountNumber, password);
+        System.out.println("\nAccount successfully created for " + userAccount.getName() + "!\n");
+
+        // Main ATM Loop
+        boolean running = true;
+        while (running) {
+            System.out.println("=== ATM MENU ===");
+            System.out.println("1. Check Balance");
+            System.out.println("2. Transfer Money");
+            System.out.println("3. Deposit Money");
+            System.out.println("4. Exit");
+            System.out.print("Choose an option: ");
+
+            int option = scanner.nextInt();
+            scanner.nextLine(); // Clear buffer
+
+            switch (option) {
+                case 1:
+                    System.out.println("\nYour account balance is: " + userAccount.getBalance() + " FCFA\n");
+                    break;
+
+                case 2:
+                    System.out.print("\nEnter receiver number: ");
+                    String receiverNumber = scanner.nextLine();
+
+                    System.out.print("Enter amount to transfer (FCFA): ");
+                    double transferAmount = scanner.nextDouble();
+
+                    if (userAccount.transfer(transferAmount)) {
+                        System.out.println("Successful transfer of " + transferAmount + " FCFA to " + receiverNumber + ".\n");
+                    } else {
+                        System.out.println("Transfer failed! Insufficient balance or invalid amount. Please try again.\n");
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("\nEnter your phone number: ");
+                    String confirmNumber = scanner.nextLine();
+
+                    if (confirmNumber.equals(userAccount.getAccountNumber())) {
+                        System.out.print("Enter amount to deposit (FCFA): ");
+                        double depositAmount = scanner.nextDouble();
+
+                        if (userAccount.deposit(depositAmount)) {
+                            System.out.println("Successful deposit of " + depositAmount + " FCFA.\n");
+                        } else {
+                            System.out.println("Deposit failed! Invalid amount. Please try again.\n");
+                        }
+                    } else {
+                        System.out.println("Deposit failed! Phone number does not match. Please try again.\n");
+                    }
+                    break;
+
+                case 4:
+                    running = false;
+                    System.out.println("Thank you for using our ATM service. Goodbye!");
+                    break;
+
+                default:
+                    System.out.println("Invalid option. Please try again.\n");
+            }
+        }
+        scanner.close();
+    }
+}
